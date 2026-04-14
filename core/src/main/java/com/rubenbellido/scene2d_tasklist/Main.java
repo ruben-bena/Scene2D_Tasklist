@@ -2,92 +2,96 @@ package com.rubenbellido.scene2d_tasklist;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Main extends ApplicationAdapter {
     private Stage stage;
     private Skin skin;
+    private TextField textField;
+    private Button button;
+    private ScrollPane scrollPane;
+    private Table tasklistTable;
 
     @Override
     public void create() {
-        // Usar ScreenViewport suele ser más sencillo para UIs de herramientas
+        // Stage
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        // 1. Creamos la Tabla Principal que contendrá todo
-        Table mainTable = new Table();
-        mainTable.setFillParent(true); // Hace que la tabla ocupe toda la pantalla
-        // mainTable.setDebug(true); // Descomenta esto para ver las líneas de la cuadrícula
+        // TextField
+        textField = new TextField("", skin);
+        textField.setAlignment(Align.center);
 
-        // 2. Creamos la parte IZQUIERDA (Formulario)
-        Table leftTable = new Table();
-        leftTable.add(new Label("Nueva Tarea", skin)).padBottom(10).row();
-
-        TextArea textArea = new TextArea("", skin);
-        // Creamos un fondo gris oscuro para el área del texto
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.DARK_GRAY);
-        pixmap.fill();
-        TextureRegionDrawable drawable = new TextureRegionDrawable(new Texture(pixmap));
-
-        // Le asignamos el fondo directamente al estilo del TextArea
-        textArea.getStyle().background = drawable;
-
-// Ahora lo añadimos a la tabla normalmente (sin el .background)
-        leftTable.add(textArea).width(200).height(100).padBottom(10).row();
-
-        TextButton addButton = new TextButton("Añadir Item", skin);
-        leftTable.add(addButton).fillX();
-        addButton.addListener(new ClickListener() {
+        // Button
+        button = new TextButton("Add to Tasklist", skin);
+        button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Botó clicat!");
+                addItem(textField.getText());
+                textField.setText("");
             }
         });
 
-        // 3. Creamos la parte DERECHA (Lista)
-        // Usamos un List de Scene2D para mostrar elementos
-        List<String> itemList = new List<>(skin);
-        itemList.setItems("Tarea 1", "Tarea 2", "Tarea 3", "Tarea 4");
+        // Table
+        tasklistTable = new Table();
+        tasklistTable.top();
 
-        // Es buena práctica meter las listas en un ScrollPane por si crecen mucho
-        ScrollPane scrollPane = new ScrollPane(itemList, skin);
+        // ScrollPane
+        scrollPane = new ScrollPane(tasklistTable, skin);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.getStyle().background = skin.getDrawable("textfield");
 
-        // 4. Juntamos las dos partes en la Tabla Principal
-        mainTable.add(leftTable).expand().fill().pad(20); // Celda izquierda
-        mainTable.add(scrollPane).expand().fill().pad(20); // Celda derecha
-
-        // 5. Añadimos la tabla al Stage
-        stage.addActor(mainTable);
+        // Añadir objetos al Stage
+        stage.addActor(textField);
+        stage.addActor(button);
+        stage.addActor(scrollPane);
     }
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        stage.act();
+        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+
+        // Resize and position TextField
+        textField.setSize(250, 40);
+        textField.setPosition(width / 4f - textField.getWidth() / 2f, height - 200);
+
+        // Resize and position Button
+        button.setSize(250, 50);
+        button.setPosition(textField.getX(), textField.getY() - 60);
+
+        // Resize and position ScrollPane
+        scrollPane.setSize(width / 2f, height);
+        scrollPane.setPosition(width / 2f, 0);
     }
 
     @Override
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+
+    private void addItem(String item) {
+        if (item == null || item.trim().isEmpty()) {
+            return;
+        }
+        Label label = new Label(item, skin);
+        tasklistTable.add(label).expandX().left().pad(5);
+        tasklistTable.row();
     }
 }
