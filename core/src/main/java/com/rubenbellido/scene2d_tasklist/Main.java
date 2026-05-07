@@ -19,12 +19,22 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class Main extends ApplicationAdapter {
     private Stage stage;
     private Skin skin;
     public FitViewport viewport;
+
+    // Elementos UI
+    TextField textField;
+    TextButton button;
+    Label label;
+    Array<String> tasks;
+    List list;
+    ScrollPane scrollPane;
     @Override
     public void create() {
         // Crear un Stage i un Skin
@@ -33,18 +43,16 @@ public class Main extends ApplicationAdapter {
         skin = new Skin(Gdx.files.internal("uiskin.json")); // Carregar un Skin per defecte
         float escala = viewport.getWorldHeight() / Gdx.graphics.getHeight();
 
-        // Ajustem paràmetres per a la font
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = new BitmapFont(); // Font per defecte
-        labelStyle.font.setUseIntegerPositions(false);
-        labelStyle.font.getData().setScale( escala );
-
         // Creem label (TextView)
-        Label label = new Label("Hola, això és un TextView", skin);
+        label = new Label("Hola, això és un TextView", skin);
         label.setPosition(100, 100); // Posició del Label
 
+        // Crear un Textfield
+        textField = new TextField("prueba", skin);
+        textField.setPosition(100, 300);
+
         // Crear un Button
-        TextButton button = new TextButton("Clica el botonet!", skin );
+        button = new TextButton("Clica el botonet!", skin );
         button.setPosition(100, 200); // Posició del Button
         button.setTransform(true);
         button.setScale( 2*escala );
@@ -55,25 +63,16 @@ public class Main extends ApplicationAdapter {
             }
         });
 
-        // Crear un Textfield
-        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = new BitmapFont(); // Font per defecte
-        textFieldStyle.font.setUseIntegerPositions(false);
-        textFieldStyle.font.getData().setScale( escala );
-        textFieldStyle.fontColor = Color.CYAN;
-        TextField textField = new TextField("prueba", textFieldStyle);
-        textField.setPosition(100, 300);
-
         // Crear Array para guardar tareas
-        Array<String> tasks = new Array<>();
+        tasks = new Array<>();
         tasks.add("uno","dos","tres");
 
         // Crear una List
-        List<String> list = new List<>(skin);
+        list = new List<>(skin);
         list.setItems(tasks);
 
         // Crear un ScrollPane
-        ScrollPane scrollPane = new ScrollPane(list, skin);
+        scrollPane = new ScrollPane(list, skin);
         scrollPane.setPosition(400, 0);
         scrollPane.setSize(400, 500);
 
