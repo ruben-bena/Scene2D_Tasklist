@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -35,6 +36,11 @@ public class Main extends ApplicationAdapter {
     Array<String> tasks;
     List list;
     ScrollPane scrollPane;
+
+    // Tablas para organizar los elementos
+    Table baseTable;
+    Table leftTable;
+    Table rightTable;
     @Override
     public void create() {
         // Crear un Stage i un Skin
@@ -44,18 +50,16 @@ public class Main extends ApplicationAdapter {
         float escala = viewport.getWorldHeight() / Gdx.graphics.getHeight();
 
         // Creem label (TextView)
-        label = new Label("Hola, això és un TextView", skin);
-        label.setPosition(100, 100); // Posició del Label
+        label = new Label("Scene2D - tasklist (Rubén Bellido)", skin);
 
         // Crear un Textfield
-        textField = new TextField("prueba", skin);
-        textField.setPosition(100, 300);
+        textField = new TextField("", skin);
+        textField.setMessageText("Escribe una tarea");
 
         // Crear un Button
-        button = new TextButton("Clica el botonet!", skin );
-        button.setPosition(100, 200); // Posició del Button
+        button = new TextButton("Añadir tarea a la lista", skin );
         button.setTransform(true);
-        button.setScale( 2*escala );
+        button.setScale( escala );
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -73,14 +77,32 @@ public class Main extends ApplicationAdapter {
 
         // Crear un ScrollPane
         scrollPane = new ScrollPane(list, skin);
-        scrollPane.setPosition(400, 0);
-        scrollPane.setSize(400, 500);
 
-        // Afegir els actors al Stage
-        stage.addActor(label);
-        stage.addActor(button);
-        stage.addActor(textField);
-        stage.addActor(scrollPane);
+        // Tabla principal (ocupa toda la pantalla)
+        baseTable = new Table();
+        baseTable.setFillParent(true);
+        baseTable.center();
+        stage.addActor(baseTable);
+
+        // Tabla izquierda (tiene el TextButton, Label y TextField)
+        leftTable = new Table();
+        leftTable.defaults().pad(10); // margen
+        leftTable.add(label);
+        leftTable.row();
+        leftTable.add(textField)
+            .width(300)
+            .height(45);
+        leftTable.row();
+        leftTable.add(button)
+            .width(300)
+            .height(45);
+
+        // Añadir elementos a tabla principal
+        baseTable.add(leftTable)
+            .padRight(50);
+        baseTable.add(scrollPane)
+            .width(350)
+            .height(400);
 
         // Configurar l'Stage com a gestor d'entrada
         Gdx.input.setInputProcessor(stage);
