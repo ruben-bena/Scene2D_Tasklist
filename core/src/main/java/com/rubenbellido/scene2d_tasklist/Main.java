@@ -2,6 +2,7 @@ package com.rubenbellido.scene2d_tasklist;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -46,9 +48,19 @@ public class Main extends ApplicationAdapter {
             }
         });
 
+        // Crear un Textfield
+        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
+        textFieldStyle.font = new BitmapFont(); // Font per defecte
+        textFieldStyle.font.setUseIntegerPositions(false);
+        textFieldStyle.font.getData().setScale( escala );
+        textFieldStyle.fontColor = Color.CYAN;
+        TextField textField = new TextField("prueba", textFieldStyle);
+        textField.setPosition(3, 3);
+
         // Afegir els actors al Stage
         stage.addActor(label);
         stage.addActor(button);
+        stage.addActor(textField);
 
         // Configurar l'Stage com a gestor d'entrada
         Gdx.input.setInputProcessor(stage);
@@ -56,12 +68,21 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+        logic();
+        draw();
+    }
+
+    public void draw() {
         // Netejar la pantalla
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Actualitzar i dibuixar l'Stage
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+    }
+
+    public void logic() {
+
     }
 
     @Override
