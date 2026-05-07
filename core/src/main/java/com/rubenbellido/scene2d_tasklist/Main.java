@@ -59,7 +59,7 @@ public class Main extends ApplicationAdapter {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Botó clicat!");
+                addTask(textField.getText());
             }
         });
 
@@ -103,6 +103,17 @@ public class Main extends ApplicationAdapter {
 
     public void logic() {
 
+    }
+
+    public void addTask(String task) {
+        // Si el usuario no pone nada en el TextField, que no añada un string vacío
+        if (task.isEmpty()) {
+            return;
+        }
+
+        // Actualizar lista con nueva tarea
+        tasks.add(task);
+        list.setItems(tasks);
     }
 
     @Override
