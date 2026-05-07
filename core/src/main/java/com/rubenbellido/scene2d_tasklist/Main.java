@@ -58,8 +58,6 @@ public class Main extends ApplicationAdapter {
 
         // Crear un Button
         button = new TextButton("Añadir tarea a la lista", skin );
-        button.setTransform(true);
-        button.setScale( escala );
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -116,6 +114,7 @@ public class Main extends ApplicationAdapter {
 
     public void draw() {
         // Netejar la pantalla
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.18f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Actualitzar i dibuixar l'Stage
