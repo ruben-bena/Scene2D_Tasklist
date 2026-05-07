@@ -67,7 +67,7 @@ public class Main extends ApplicationAdapter {
 
         // Crear Array para guardar tareas
         tasks = new Array<>();
-        tasks.add("uno","dos","tres");
+        tasks.add("Tarea de ejemplo 1","Tarea de ejemplo 2","Tarea de ejemplo 3");
 
         // Crear una List
         list = new List<>(skin);
@@ -142,5 +142,10 @@ public class Main extends ApplicationAdapter {
         // Alliberar recursos
         stage.dispose();
         skin.dispose();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
     }
 }
