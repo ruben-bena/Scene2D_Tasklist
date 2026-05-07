@@ -3,95 +3,71 @@ package com.rubenbellido.scene2d_tasklist;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 public class Main extends ApplicationAdapter {
     private Stage stage;
     private Skin skin;
-    private TextField textField;
-    private Button button;
-    private ScrollPane scrollPane;
-    private Table tasklistTable;
-
+    public FitViewport viewport;
     @Override
     public void create() {
-        // Stage
-        stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        // Crear un Stage i un Skin
+        viewport = new FitViewport(8,5);
+        stage = new Stage(viewport);
+        skin = new Skin(Gdx.files.internal("uiskin.json")); // Carregar un Skin per defecte
+        float escala = viewport.getWorldHeight() / Gdx.graphics.getHeight();
 
-        // TextField
-        textField = new TextField("", skin);
-        textField.setAlignment(Align.center);
+        // Ajustem paràmetres per a la font
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = new BitmapFont(); // Font per defecte
+        labelStyle.font.setUseIntegerPositions(false);
+        labelStyle.font.getData().setScale( escala );
 
-        // Button
-        button = new TextButton("Add to Tasklist", skin);
+        // Creem label (TextView)
+        Label label = new Label("Hola, això és un TextView", labelStyle);
+        label.setPosition(1, 1); // Posició del Label
+
+        // Crear un Button
+        TextButton button = new TextButton("Clica el botonet!", skin );
+        button.setPosition(2, 2); // Posició del Button
+        button.setTransform(true);
+        button.setScale( 2*escala );
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                addItem(textField.getText());
-                textField.setText("");
+                System.out.println("Botó clicat!");
             }
         });
 
-        // Table
-        tasklistTable = new Table();
-        tasklistTable.top();
-
-        // ScrollPane
-        scrollPane = new ScrollPane(tasklistTable, skin);
-        scrollPane.setFadeScrollBars(false);
-        scrollPane.getStyle().background = skin.getDrawable("textfield");
-
-        // Añadir objetos al Stage
-        stage.addActor(textField);
+        // Afegir els actors al Stage
+        stage.addActor(label);
         stage.addActor(button);
-        stage.addActor(scrollPane);
+
+        // Configurar l'Stage com a gestor d'entrada
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.15f, 1);
+        // Netejar la pantalla
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Actualitzar i dibuixar l'Stage
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
 
     @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-
-        // Resize and position TextField
-        textField.setSize(250, 40);
-        textField.setPosition(width / 4f - textField.getWidth() / 2f, height - 200);
-
-        // Resize and position Button
-        button.setSize(250, 50);
-        button.setPosition(textField.getX(), textField.getY() - 60);
-
-        // Resize and position ScrollPane
-        scrollPane.setSize(width / 2f, height);
-        scrollPane.setPosition(width / 2f, 0);
-    }
-
-    @Override
     public void dispose() {
+        // Alliberar recursos
         stage.dispose();
         skin.dispose();
-    }
-
-    private void addItem(String item) {
-        if (item == null || item.trim().isEmpty()) {
-            return;
-        }
-        Label label = new Label(item, skin);
-        tasklistTable.add(label).expandX().left().pad(5);
-        tasklistTable.row();
     }
 }
